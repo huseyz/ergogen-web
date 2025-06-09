@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "../node_modules/react-tabs/style/react-tabs.css";
+
+.react-tabs__tab-panel--selected {
+  height: 100%;
+}
+
+.react-tabs {
+  height: 100%;
+}
