@@ -35,48 +35,54 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
   };
 
   // Handler for downloading config and custom footprints as a zip
-  const downloadConfigWithFootprints = async () => {
+  const downloadConfigWithFootprints = () => {
     const zip = new JSZip();
-    
+
     // Add config file
     zip.file('config.yaml', configInput);
-    
+
     // Add custom footprints
     if (customFootprints.length > 0) {
       const footprintsDir = zip.folder('footprints');
       if (footprintsDir) {
-        customFootprints.forEach(footprint => {
+        customFootprints.forEach((footprint) => {
           footprintsDir.file(`${footprint.name}.js`, footprint.content);
         });
       }
     }
-    
+
     // Generate and download the zip
-    const content = await zip.generateAsync({ type: 'blob' });
-    saveAs(content, 'ergogen-config-with-footprints.zip');
+    zip
+      .generateAsync({ type: 'blob' })
+      .then((content) => {
+        saveAs(content, 'ergogen-config-with-footprints.zip');
+      })
+      .catch((error: unknown) => {
+        console.error(error);
+      });
     setIsMenuOpen(false);
   };
 
   // Handler for downloading all resources (config, footprints, and generated files)
-  const downloadAllResources = async () => {
+  const downloadAllResources = () => {
     const zip = new JSZip();
     const { results } = useStore.getState();
-    
+
     // Add config file
     zip.file('config.yaml', configInput);
-    
+
     // Add custom footprints
     if (customFootprints.length > 0) {
       const footprintsDir = zip.folder('footprints');
       if (footprintsDir) {
-        customFootprints.forEach(footprint => {
+        customFootprints.forEach((footprint) => {
           footprintsDir.file(`${footprint.name}.js`, footprint.content);
         });
       }
     }
-    
+
     // Add generated files (pcb, svg, dxf)
-    if (results && Object.keys(results).length > 0) {
+    if (Object.keys(results).length > 0) {
       // Add PCBs
       if (results.pcbs && Object.entries(results.pcbs).length > 0) {
         const pcbsDir = zip.folder('pcbs');
@@ -88,25 +94,29 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
           }
         }
       }
-      
+
       // Add SVGs and DXFs
       if (results.outlines && Object.entries(results.outlines).length > 0) {
         const svgsDir = zip.folder('svgs');
         const dxfsDir = zip.folder('dxfs');
         if (svgsDir) {
           for (const [name, drawing] of Object.entries(results.outlines)) {
-            if (drawing) {
-              svgsDir.file(`${name}.svg`, drawing.svg);
-              dxfsDir?.file(`${name}.dxf`, drawing.dxf);
-            }
+            svgsDir.file(`${name}.svg`, drawing.svg);
+            dxfsDir?.file(`${name}.dxf`, drawing.dxf);
           }
         }
       }
     }
-    
+
     // Generate and download the zip
-    const content = await zip.generateAsync({ type: 'blob' });
-    saveAs(content, 'ergogen-all-resources.zip');
+    zip
+      .generateAsync({ type: 'blob' })
+      .then((content) => {
+        saveAs(content, 'ergogen-all-resources.zip');
+      })
+      .catch((error: unknown) => {
+        console.error(error);
+      });
     setIsMenuOpen(false);
   };
 
@@ -118,10 +128,13 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
         <div className="flex items-center space-x-4">
           <div className="flex items-center px-2">
             <button
-              onClick={() => useStore.getState().toggleAutoGenerate()}
+              onClick={() => {
+                useStore.getState().toggleAutoGenerate();
+              }}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 ${useStore.getState().autoGenerate ? 'bg-indigo-800' : 'bg-gray-600'}`}
               aria-pressed={useStore.getState().autoGenerate}
               aria-label="Toggle auto generation"
+              type="button"
             >
               <span
                 className={`${useStore.getState().autoGenerate ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
@@ -133,6 +146,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
             className="p-2 rounded hover:bg-gray-700 transition"
             aria-label="Custom Footprints"
             onClick={onOpenCustomFootprints}
+            type="button"
           >
             <Library />
           </button>
@@ -141,18 +155,25 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
               className="p-2 rounded hover:bg-gray-700 transition flex items-center gap-1"
               aria-label="Download options"
               aria-expanded={isMenuOpen}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              type="button"
             >
               <Download size={16} />
-              <ChevronDown size={16} className={`transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${isMenuOpen ? 'rotate-180' : ''}`}
+              />
             </button>
-            
+
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <button
                     onClick={downloadConfigYaml}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2"
+                    type="button"
                   >
                     <Download size={16} />
                     <span>Download Config (YAML)</span>
@@ -161,6 +182,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                     onClick={downloadConfigWithFootprints}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2"
                     disabled={customFootprints.length === 0}
+                    type="button"
                   >
                     <Download size={16} />
                     <span>Download with Footprints (ZIP)</span>
@@ -168,10 +190,15 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                   <button
                     onClick={downloadAllResources}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2 border-t border-gray-700 mt-1 pt-2"
-                    disabled={!useStore.getState().results || Object.keys(useStore.getState().results).length === 0}
+                    disabled={
+                      Object.keys(useStore.getState().results).length === 0
+                    }
+                    type="button"
                   >
                     <Download size={16} className="text-green-400" />
-                    <span className="font-medium">Download All Resources (ZIP)</span>
+                    <span className="font-medium">
+                      Download All Resources (ZIP)
+                    </span>
                   </button>
                 </div>
               </div>

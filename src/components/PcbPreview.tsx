@@ -1,6 +1,6 @@
-import { Download } from "lucide-react";
-import { useStore } from "../ConfigStore";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { Download } from 'lucide-react';
+import { useStore } from '../ConfigStore';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 export interface PcbPreviewTabContentProps {
   source: string;
@@ -24,17 +24,21 @@ export default function PcbPreview() {
   return (
     <Tabs>
       <TabList>
-        {Object.keys(results.pcbs || {}).map((key) => {
+        {Object.keys(results.pcbs ?? {}).map((key) => {
           return <Tab key={key}>{key}</Tab>;
         })}
       </TabList>
-      {Object.keys(results.pcbs || {}).map((key) => {
+      {Object.keys(results.pcbs ?? {}).map((key) => {
         const url = URL.createObjectURL(
-          new Blob([results.pcbs?.[key] || ""], { type: "text/plain" })
+          new Blob([results.pcbs?.[key] ?? ''], { type: 'text/plain' }),
         );
         return (
           <TabPanel key={key}>
-            <a href={url} download={`${key + Date.now()}.kicad_pcb`} className="flex justify-center">
+            <a
+              href={url}
+              download={`${key + Date.now().toString()}.kicad_pcb`}
+              className="flex justify-center"
+            >
               <Download />
             </a>
             <PcbPreviewTabContent source={url} />

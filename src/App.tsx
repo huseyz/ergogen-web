@@ -12,11 +12,15 @@ import SvgPreview from './components/SvgPreview';
 Modal.setAppElement('#root');
 
 function App() {
-  const { libraryOpen, setLibraryOpen, results } = useStore(); 
+  const { libraryOpen, setLibraryOpen, results } = useStore();
   return (
     <div className="fixed inset-0 bg-gray-900 text-gray-100 flex flex-col">
       {/* Header */}
-      <Header onOpenCustomFootprints={() => setLibraryOpen(true)} />
+      <Header
+        onOpenCustomFootprints={() => {
+          setLibraryOpen(true);
+        }}
+      />
       {/* Main Content */}
       <main className="flex flex-1 overflow-hidden">
         {/* Left Column: ConfigEditor */}
@@ -24,30 +28,38 @@ function App() {
           <ConfigEditor />
         </section>
         <section className="w-2/3 flex flex-col h-full">
-  {/* Top row: 2/3 height */}
-  <div className="flex-2/3 flex-grow-[2] basis-2/3 m  in-h-0 flex items-center justify-center overflow-hidden">
-   <Tabs className="w-full h-full react-tabs">
-      <TabList>
-        {Object.keys(results.outlines || {}).length > 0 && <Tab>SVG</Tab>}
-        {Object.keys(results.pcbs || {}).length > 0 && <Tab>PCB</Tab>}
-      </TabList>
-      {Object.keys(results.outlines || {}).length > 0 && <TabPanel>
-        <SvgPreview />
-      </TabPanel>}
-      {Object.keys(results.pcbs || {}).length > 0 && <TabPanel>
-        <PcbPreview />
-      </TabPanel>}
-    </Tabs>
-  </div>
-  {/* Bottom row: 1/3 height */}
-  <div className="flex-1/3 flex-grow basis-1/3 min-h-0 flex items-center justify-center border border-gray-600">
-    <Console />
-  </div>
-</section>
+          {/* Top row: 2/3 height */}
+          <div className="flex-2/3 flex-grow-[2] basis-2/3 m  in-h-0 flex items-center justify-center overflow-hidden">
+            <Tabs className="w-full h-full react-tabs">
+              <TabList>
+                {Object.keys(results.outlines ?? {}).length > 0 && (
+                  <Tab>SVG</Tab>
+                )}
+                {Object.keys(results.pcbs ?? {}).length > 0 && <Tab>PCB</Tab>}
+              </TabList>
+              {Object.keys(results.outlines ?? {}).length > 0 && (
+                <TabPanel>
+                  <SvgPreview />
+                </TabPanel>
+              )}
+              {Object.keys(results.pcbs ?? {}).length > 0 && (
+                <TabPanel>
+                  <PcbPreview />
+                </TabPanel>
+              )}
+            </Tabs>
+          </div>
+          {/* Bottom row: 1/3 height */}
+          <div className="flex-1/3 flex-grow basis-1/3 min-h-0 flex items-center justify-center border border-gray-600">
+            <Console />
+          </div>
+        </section>
         {/* Custom Footprints Library Modal */}
         <Modal
           isOpen={libraryOpen}
-          onRequestClose={() => setLibraryOpen(false)}
+          onRequestClose={() => {
+            setLibraryOpen(false);
+          }}
           contentLabel="Custom Footprints Library"
           style={{
             content: {
@@ -63,4 +75,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

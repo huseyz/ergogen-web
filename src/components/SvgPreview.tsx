@@ -11,7 +11,7 @@ interface PreviewTabContentProps {
 
 function PreviewTabContent(props: PreviewTabContentProps) {
   return (
-    <PanZoom className='overflow-hidden h-full'>
+    <PanZoom className="overflow-hidden h-full">
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(props.svg)}`}
         draggable={false}
@@ -29,28 +29,28 @@ export default function SvgPreview() {
   return (
     <Tabs>
       <TabList>
-        {Object.keys(results.outlines || {}).map((key) => (
+        {Object.keys(results.outlines ?? {}).map((key) => (
           <Tab key={key}>{key}</Tab>
         ))}
         {results.demo?.svg && <Tab>demo</Tab>}
       </TabList>
-      {Object.keys(results.outlines || {}).map((key) => {
+      {Object.keys(results.outlines ?? {}).map((key) => {
         const url = URL.createObjectURL(
-          new Blob([results.outlines?.[key].dxf || ''], { type: 'text/plain' }),
+          new Blob([results.outlines?.[key].dxf ?? ''], { type: 'text/plain' }),
         );
         return (
           <TabPanel key={key}>
             <a
               href={url}
-              download={`${key + Date.now()}.dxf`}
+              download={`${key + Date.now().toString()}.dxf`}
               className="flex justify-center"
             >
               <Download />
             </a>
             <PreviewTabContent
-              svg={results.outlines?.[key].svg || ''}
+              svg={results.outlines?.[key].svg ?? ''}
               name={key}
-              dxf={results.outlines?.[key].dxf || ''}
+              dxf={results.outlines?.[key].dxf ?? ''}
             />
           </TabPanel>
         );
@@ -58,9 +58,9 @@ export default function SvgPreview() {
       {results.demo?.svg && (
         <TabPanel key="demo">
           <PreviewTabContent
-            svg={results.demo.svg || ''}
+            svg={results.demo.svg}
             name="demo"
-            dxf={results.demo.dxf || ''}
+            dxf={results.demo.dxf}
           />
         </TabPanel>
       )}

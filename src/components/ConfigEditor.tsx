@@ -14,20 +14,19 @@ export default function ConfigEditor() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   const { configInput, setConfigInput } = useStore();
-  const debouncedConfigInput = useDebouncedCallback(
-    (value: string) => setConfigInput(value),
-    500,
-  );
+  const debouncedConfigInput = useDebouncedCallback((value: string) => {
+    setConfigInput(value);
+  }, 500);
 
   const editorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
 
     setTimeout(() => {
-      editor.getAction('editor.action.formatDocument')?.run();
+      void editor.getAction('editor.action.formatDocument')?.run();
     }, 100);
   };
 
-  const editorBeforeMount = async (monaco: any) => {
+  const editorBeforeMount = (monaco: typeof import('monaco-editor')) => {
     if (monacoYaml) return;
 
     window.MonacoEnvironment = {
@@ -43,7 +42,7 @@ export default function ConfigEditor() {
       },
     };
 
-    monacoYaml = await configureMonacoYaml(monaco, {
+    monacoYaml = configureMonacoYaml(monaco, {
       enableSchemaRequest: true,
       hover: true,
       completion: true,
@@ -64,7 +63,7 @@ export default function ConfigEditor() {
         language="yaml"
         theme="vs-dark"
         value={configInput}
-        onChange={(value) => debouncedConfigInput(value || '')}
+        onChange={(value) => debouncedConfigInput(value ?? '')}
         options={{
           minimap: { enabled: false },
           scrollBeyondLastLine: true,

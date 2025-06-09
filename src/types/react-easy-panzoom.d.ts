@@ -17,9 +17,7 @@ declare module 'react-easy-panzoom' {
     disableScrollZoom?: boolean;
     disableKeyInteraction?: boolean;
     realPinch?: boolean;
-    keyMapping?: {
-      [key: string]: string;
-    };
+    keyMapping?: Record<string, string>;
     minZoom?: number;
     maxZoom?: number;
     enablePan?: boolean;

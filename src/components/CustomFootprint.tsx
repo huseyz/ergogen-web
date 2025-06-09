@@ -21,7 +21,10 @@ export default function CustomFootprint(props: CustomFootprintProps) {
         <button
           className="p-2 rounded hover:bg-gray-700 transition"
           aria-label="Delete"
-          onClick={() => props.onDelete()}
+          onClick={() => {
+            props.onDelete();
+          }}
+          type="button"
         >
           <Trash />
         </button>
@@ -38,7 +41,10 @@ export default function CustomFootprint(props: CustomFootprintProps) {
         <button
           className="p-2 rounded hover:bg-gray-700 transition"
           aria-label="Edit"
-          onClick={() => props.onSelect()}
+          onClick={() => {
+            props.onSelect();
+          }}
+          type="button"
         >
           <Edit />
         </button>

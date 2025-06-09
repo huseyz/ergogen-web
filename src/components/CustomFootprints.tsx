@@ -46,7 +46,9 @@ export default function CustomFootprints() {
                   key={customFootprint.id}
                   customFootprint={customFootprint}
                   selected={selectedCustomFootprint?.id === customFootprint.id}
-                  onSelect={() => setSelectedCustomFootprint(customFootprint)}
+                  onSelect={() => {
+                    setSelectedCustomFootprint(customFootprint);
+                  }}
                   onDelete={() => {
                     removeCustomFootprint(customFootprint);
                     if (selectedCustomFootprint?.id === customFootprint.id) {
@@ -63,20 +65,24 @@ export default function CustomFootprints() {
                 onClick={() => {
                   const newFootprint = {
                     id: nextKey,
-                    name: 'custom_footprint_' + nextKey,
+                    name: 'custom_footprint_' + nextKey.toString(),
                     content: defaultFootprintContent,
                   };
                   setNextKey((key) => key + 1);
                   addCustomFootprint(newFootprint);
                   setSelectedCustomFootprint(newFootprint);
                 }}
+                type="button"
               >
                 <Plus />
               </button>
               <button
                 className="p-1 rounded-3xl bg-green-800 hover:bg-green-700 transition"
                 aria-label="Upload Custom Footprint"
-                onClick={() => console.log('Upload Custom Footprint')}
+                onClick={() => {
+                  console.log('Upload Custom Footprint');
+                }}
+                type="button"
               >
                 <HardDriveUpload />
               </button>
@@ -90,7 +96,7 @@ export default function CustomFootprints() {
               <input
                 className="border border-white rounded w-full"
                 type="text"
-                value={selectedCustomFootprint?.name || ''}
+                value={selectedCustomFootprint?.name ?? ''}
                 disabled={!selectedCustomFootprint}
                 onChange={(e) => {
                   if (selectedCustomFootprint) {
@@ -114,7 +120,7 @@ export default function CustomFootprints() {
                   if (selectedCustomFootprint) {
                     const updated = {
                       ...selectedCustomFootprint,
-                      content: value || '',
+                      content: value ?? '',
                     };
                     updateCustomFootprint(updated);
                     setSelectedCustomFootprint(updated);
@@ -122,7 +128,7 @@ export default function CustomFootprints() {
                 }}
                 defaultLanguage="javascript"
                 theme="vs-dark"
-                value={selectedCustomFootprint?.content || ''}
+                value={selectedCustomFootprint?.content ?? ''}
                 options={{
                   readOnly: !selectedCustomFootprint,
                   minimap: { enabled: false },
