@@ -32,6 +32,23 @@ export default function CustomFootprints() {
     }
   });
 
+  // Handler for file upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const newFootprint = {
+      id: nextKey,
+      name: file.name.replace(/\.js$/, ''),
+      content: text,
+    };
+    setNextKey((key) => key + 1);
+    addCustomFootprint(newFootprint);
+    setSelectedCustomFootprint(newFootprint);
+    // Reset input so same file can be uploaded again if needed
+    e.target.value = '';
+  };
+
   return (
     <div className="bg-gray-900 text-gray-100 flex flex-col w-full h-full">
       <header className="p-3 bg-gray-800">
@@ -76,11 +93,21 @@ export default function CustomFootprints() {
               >
                 <Plus />
               </button>
+              {/* Hidden file input for uploading JS files */}
+              <input
+                type="file"
+                accept=".js"
+                style={{ display: 'none' }}
+                id="custom-footprint-upload-input"
+                onChange={(e) => {
+                  void handleFileUpload(e);
+                }}
+              />
               <button
                 className="p-1 rounded-3xl bg-green-800 hover:bg-green-700 transition"
                 aria-label="Upload Custom Footprint"
                 onClick={() => {
-                  console.log('Upload Custom Footprint');
+                  document.getElementById('custom-footprint-upload-input')?.click();
                 }}
                 type="button"
               >
