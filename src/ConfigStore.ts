@@ -3,6 +3,45 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Results } from 'ergogen';
 import type { CustomFootprintConfig } from './types';
 
+const emptyConfig = `metadata:
+  engine: "4.1.0"
+  name: "Ergogen Web"
+  author: "huseyz"
+units:
+  kx: cx
+  ky: cy
+points:
+  zones:
+    matrix:
+      anchor:
+        shift: [100, -100]
+      columns:
+        c1:
+      rows:
+        r1:
+outlines:
+  raw:
+    - what: rectangle
+      where: true
+      size: [kx, ky]
+pcbs:
+  van:
+    template: kicad8
+    outlines:
+      main:
+        outline: raw
+    footprints:
+      choc_hotswap:
+        what: choc
+        where: true
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+`
+
 interface ConfigStoreState {
   customFootprints: CustomFootprintConfig[];
   configInput: string;
@@ -31,7 +70,7 @@ export const useStore = create<ConfigStore>()(
   persist(
     (set) => ({
       customFootprints: [],
-      configInput: '',
+      configInput: emptyConfig,
       results: {},
       libraryOpen: false,
       autoGenerate: true,
