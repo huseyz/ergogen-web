@@ -6,6 +6,7 @@ import ConfigEditor from './components/ConfigEditor';
 import Console from './components/Console';
 import CustomFootprints from './components/CustomFootprints';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import PcbPreview from './components/PcbPreview';
 import SvgPreview from './components/SvgPreview';
 import { parseSharableURL } from './utils/importExportUtils';
@@ -39,8 +40,8 @@ function App() {
           <ConfigEditor />
         </section>
         <section className="w-2/3 flex flex-col h-full">
-          {/* Top row: 2/3 height */}
-          <div className="flex-2/3 flex-grow-[2] basis-2/3 m  in-h-0 flex items-center justify-center overflow-hidden">
+          {/* Preview row: 3/4 height */}
+          <div className="flex-3/4 flex-grow-[2] basis-3/4 min-h-0 flex items-center justify-center overflow-hidden">
             <Tabs className="w-full h-full react-tabs">
               <TabList>
                 {Object.keys(results.outlines ?? {}).length > 0 && (
@@ -60,8 +61,8 @@ function App() {
               )}
             </Tabs>
           </div>
-          {/* Bottom row: 1/3 height */}
-          <div className="flex-1/3 flex-grow basis-1/3 min-h-0 flex items-center justify-center border border-gray-600">
+          {/* Console row: 1/4 height */}
+          <div className="flex-1/4 flex-grow basis-1/4 min-h-0 flex items-center justify-center border border-gray-600">
             <Console />
           </div>
         </section>
@@ -82,6 +83,7 @@ function App() {
           <CustomFootprints />
         </Modal>
       </main>
+      <Footer />
     </div>
   );
 }

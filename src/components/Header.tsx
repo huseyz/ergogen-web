@@ -27,7 +27,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    document.title = `Ergogen Web - ${results.canonical?.metadata?.name ?? ""}`;
+    document.title = `Ergogen Web - ${results.canonical?.metadata?.name ?? "Untitled"}`;
   }, [results]);
 
   // Handler for downloading just the config YAML
@@ -67,7 +67,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
   };
 
   return (
-    <header className="w-full py-4 px-8 bg-gray-800 shadow-md">
+    <header className="w-full py-1 px-8 bg-gray-800 shadow-md">
       <div className="flex items-center justify-between">
         <span className="text-2xl font-bold">Ergogen Web</span>
 
@@ -77,10 +77,11 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
               onClick={() => {
                 useStore.getState().toggleAutoGenerate();
               }}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 ${useStore.getState().autoGenerate ? 'bg-indigo-800' : 'bg-gray-600'}`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 ${useStore.getState().autoGenerate ? 'bg-green-600' : 'bg-gray-600'}`}
               aria-pressed={useStore.getState().autoGenerate}
               aria-label="Toggle auto generation"
               type="button"
+              title='Auto generate'
             >
               <span
                 className={`${useStore.getState().autoGenerate ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
@@ -93,7 +94,8 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
             aria-label="Custom Footprints"
             onClick={onOpenCustomFootprints}
             type="button"
-          >
+            title='Custom Footprints'
+            >
             <Library />
           </button>
           <div className="relative" ref={menuRef}>

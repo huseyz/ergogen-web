@@ -21,7 +21,7 @@ export default function ConfigEditor() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center pb-3">
+    <div className="w-full h-full flex flex-col items-center justify-center">
       <Editor
         path="config.yaml"
         language="yaml"
