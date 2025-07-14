@@ -8,11 +8,22 @@ import CustomFootprints from './components/CustomFootprints';
 import Header from './components/Header';
 import PcbPreview from './components/PcbPreview';
 import SvgPreview from './components/SvgPreview';
+import { parseSharableURL } from './utils/importExportUtils';
+import { useEffect } from 'react';
 
 Modal.setAppElement('#root');
 
 function App() {
-  const { libraryOpen, setLibraryOpen, results } = useStore();
+  const { libraryOpen, setLibraryOpen, results, setInput } = useStore();
+
+  useEffect(() => {
+    const parsedSharableURL = parseSharableURL(window.location.href);
+    if (parsedSharableURL) {
+      setInput(parsedSharableURL.config, parsedSharableURL.customFootprints);
+      window.location.href = '/';
+    }
+  }, [setInput]);
+
   return (
     <div className="fixed inset-0 bg-gray-900 text-gray-100 flex flex-col">
       {/* Header */}

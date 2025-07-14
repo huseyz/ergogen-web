@@ -39,6 +39,7 @@
     "react-tabs": "^6.1.0",
     "react-use": "^17.6.0",
     "tailwindcss": "^4.1.5",
+    "ts-md5": "^2.0.1",
     "use-debounce": "^10.0.4",
     "use-image": "^1.1.1",
     "zustand": "^5.0.4"

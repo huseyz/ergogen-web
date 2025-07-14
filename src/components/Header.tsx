@@ -1,15 +1,14 @@
 import { Download, Library, ChevronDown } from 'lucide-react';
 import { useStore } from '../ConfigStore';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 import { useState, useRef, useEffect } from 'react';
+import { downloadConfigYaml, downloadConfigWithFootprints, downloadAllResources, createSharableURL } from '../utils/importExportUtils';
 
 interface HeaderProps {
   onOpenCustomFootprints: () => void;
 }
 
 export default function Header({ onOpenCustomFootprints }: HeaderProps) {
-  const { configInput, customFootprints } = useStore();
+  const { configInput, customFootprints, results, addLog } = useStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -27,97 +26,44 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    document.title = `Ergogen Web - ${results.canonical?.metadata?.name ?? ""}`;
+  }, [results]);
+
   // Handler for downloading just the config YAML
-  const downloadConfigYaml = () => {
-    const blob = new Blob([configInput], { type: 'text/yaml' });
-    saveAs(blob, 'config.yaml');
-    setIsMenuOpen(false);
+  const handleDownloadConfigYaml = () => {
+    downloadConfigYaml(configInput, () => {
+      setIsMenuOpen(false);
+    });
   };
 
   // Handler for downloading config and custom footprints as a zip
-  const downloadConfigWithFootprints = () => {
-    const zip = new JSZip();
-
-    // Add config file
-    zip.file('config.yaml', configInput);
-
-    // Add custom footprints
-    if (customFootprints.length > 0) {
-      const footprintsDir = zip.folder('footprints');
-      if (footprintsDir) {
-        customFootprints.forEach((footprint) => {
-          footprintsDir.file(`${footprint.name}.js`, footprint.content);
-        });
-      }
-    }
-
-    // Generate and download the zip
-    zip
-      .generateAsync({ type: 'blob' })
-      .then((content) => {
-        saveAs(content, 'ergogen-config-with-footprints.zip');
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-      });
-    setIsMenuOpen(false);
+  const handleDownloadConfigWithFootprints = () => {
+    downloadConfigWithFootprints(configInput, customFootprints, () => {
+      setIsMenuOpen(false);
+    });
   };
 
   // Handler for downloading all resources (config, footprints, and generated files)
-  const downloadAllResources = () => {
-    const zip = new JSZip();
-    const { results } = useStore.getState();
+  const handleDownloadAllResources = () => {
+    downloadAllResources(configInput, customFootprints, results, () => {
+      setIsMenuOpen(false);
+    });
+  };
 
-    // Add config file
-    zip.file('config.yaml', configInput);
-
-    // Add custom footprints
-    if (customFootprints.length > 0) {
-      const footprintsDir = zip.folder('footprints');
-      if (footprintsDir) {
-        customFootprints.forEach((footprint) => {
-          footprintsDir.file(`${footprint.name}.js`, footprint.content);
-        });
-      }
-    }
-
-    // Add generated files (pcb, svg, dxf)
-    if (Object.keys(results).length > 0) {
-      // Add PCBs
-      if (results.pcbs && Object.entries(results.pcbs).length > 0) {
-        const pcbsDir = zip.folder('pcbs');
-        if (pcbsDir) {
-          for (const [name, content] of Object.entries(results.pcbs)) {
-            if (content) {
-              pcbsDir.file(`${name}.kicad_pcb`, content);
-            }
-          }
-        }
-      }
-
-      // Add SVGs and DXFs
-      if (results.outlines && Object.entries(results.outlines).length > 0) {
-        const svgsDir = zip.folder('svgs');
-        const dxfsDir = zip.folder('dxfs');
-        if (svgsDir) {
-          for (const [name, drawing] of Object.entries(results.outlines)) {
-            svgsDir.file(`${name}.svg`, drawing.svg);
-            dxfsDir?.file(`${name}.dxf`, drawing.dxf);
-          }
-        }
-      }
-    }
-
-    // Generate and download the zip
-    zip
-      .generateAsync({ type: 'blob' })
-      .then((content) => {
-        saveAs(content, 'ergogen-all-resources.zip');
+  // Handler for copying sharable URL
+  const handleCopyShareableUrl = () => {
+    navigator.clipboard.writeText(createSharableURL(window.location.origin, { name: results.canonical?.metadata?.name ?? "", config: configInput, customFootprints }))
+      .then(() => {
+        setIsMenuOpen(false);
       })
-      .catch((error: unknown) => {
-        console.error(error);
+      .catch((err: unknown) => {
+        if (err instanceof Error) {
+          addLog("Failed to copy to clipboard: " + err.message, "error");
+        } else {
+          addLog("Failed to copy to clipboard: " + String(err), "error");
+        }
       });
-    setIsMenuOpen(false);
   };
 
   return (
@@ -171,7 +117,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
               <div className="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <button
-                    onClick={downloadConfigYaml}
+                    onClick={handleDownloadConfigYaml}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2"
                     type="button"
                   >
@@ -179,7 +125,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                     <span>Download Config (YAML)</span>
                   </button>
                   <button
-                    onClick={downloadConfigWithFootprints}
+                    onClick={handleDownloadConfigWithFootprints}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2"
                     disabled={customFootprints.length === 0}
                     type="button"
@@ -188,7 +134,7 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                     <span>Download with Footprints (ZIP)</span>
                   </button>
                   <button
-                    onClick={downloadAllResources}
+                    onClick={handleDownloadAllResources}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2 border-t border-gray-700 mt-1 pt-2"
                     disabled={
                       Object.keys(useStore.getState().results).length === 0
@@ -198,6 +144,16 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                     <Download size={16} className="text-green-400" />
                     <span className="font-medium">
                       Download All Resources (ZIP)
+                    </span>
+                  </button>
+                  <button
+                    onClick={handleCopyShareableUrl}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2 border-t border-gray-700 mt-1 pt-2"
+                    type="button"
+                  >
+                    <Download size={16} />
+                    <span>
+                      Copy Sharable URL
                     </span>
                   </button>
                 </div>

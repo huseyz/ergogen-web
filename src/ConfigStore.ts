@@ -17,6 +17,7 @@ interface ConfigStoreActions {
   removeCustomFootprint: (customFootprint: CustomFootprintConfig) => void;
   updateCustomFootprint: (customFootprint: CustomFootprintConfig) => void;
   setConfigInput: (configInput: string) => void;
+  setInput: (input: string, customFootprints: CustomFootprintConfig[]) => void;
   setResults: (results: Results) => void;
   setLibraryOpen: (libraryOpen: boolean) => void;
   setAutoGenerate: (autoGenerate: boolean) => void;
@@ -62,6 +63,12 @@ export const useStore = create<ConfigStore>()(
       setResults: (results: Results) => {
         set((_) => ({
           results: results,
+        }));
+      },
+      setInput: (input: string, customFootprints: CustomFootprintConfig[]) => {
+        set((_) => ({
+          configInput: input,
+          customFootprints: customFootprints,
         }));
       },
       setLibraryOpen: (libraryOpen: boolean) => {

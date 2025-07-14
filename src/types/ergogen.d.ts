@@ -14,6 +14,14 @@ declare module 'ergogen' {
     r: number;
   }
 
+  export interface Canonical {
+    metadata?: Metadata;
+  }
+
+  export interface Metadata {
+    name?: string;
+  }
+
   export interface Results {
     cases?: Record<string, Case>;
     outlines?: Record<string, Drawing>;
@@ -21,6 +29,7 @@ declare module 'ergogen' {
     points?: Record<string, Point>;
     demo?: Drawing;
     units?: Record<string, number>;
+    canonical?: Canonical;
   }
 
   export function inject(

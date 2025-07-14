@@ -3,3 +3,9 @@ export interface CustomFootprintConfig {
   name: string;
   content: string;
 }
+
+export interface ConfigBundle { 
+  name: string; 
+  config: string; 
+  customFootprints: CustomFootprintConfig[] 
+}
