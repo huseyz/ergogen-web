@@ -28,7 +28,6 @@
     "konva": "^9.3.20",
     "lucide-react": "^0.507.0",
     "monaco-editor": "^0.52.2",
-    "monaco-yaml": "^5.4.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-easy-panzoom": "^0.4.4",
