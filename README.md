@@ -2,7 +2,9 @@
 
 Ergogen Web is a web interface for Ergogen, an ergonomic keyboard generator.
 
-## Features:
+![](https://github.com/huseyz/ergogen-web/blob/main/static/ss1.png)
+
+## Features
 - Config editor with syntax highlighting
 - Custom footprints
 - Preview drawings and PCBs
