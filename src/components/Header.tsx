@@ -32,21 +32,21 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
 
   // Handler for downloading just the config YAML
   const handleDownloadConfigYaml = () => {
-    downloadConfigYaml(configInput, () => {
+    downloadConfigYaml(results.canonical?.metadata?.name, configInput, () => {
       setIsMenuOpen(false);
     });
   };
 
   // Handler for downloading config and custom footprints as a zip
   const handleDownloadConfigWithFootprints = () => {
-    downloadConfigWithFootprints(configInput, customFootprints, () => {
+    downloadConfigWithFootprints(results.canonical?.metadata?.name, configInput, customFootprints, () => {
       setIsMenuOpen(false);
     });
   };
 
   // Handler for downloading all resources (config, footprints, and generated files)
   const handleDownloadAllResources = () => {
-    downloadAllResources(configInput, customFootprints, results, () => {
+    downloadAllResources(results.canonical?.metadata?.name, configInput, customFootprints, results, () => {
       setIsMenuOpen(false);
     });
   };
@@ -127,7 +127,6 @@ export default function Header({ onOpenCustomFootprints }: HeaderProps) {
                   <button
                     onClick={handleDownloadConfigWithFootprints}
                     className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white flex items-center gap-2"
-                    disabled={customFootprints.length === 0}
                     type="button"
                   >
                     <Download size={16} />

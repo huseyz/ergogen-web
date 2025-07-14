@@ -4,14 +4,15 @@ import type { Results } from 'ergogen';
 import type { ConfigBundle, CustomFootprintConfig } from '../types';
 
 // Download just the config YAML
-export const downloadConfigYaml = (configInput: string, onComplete?: () => void) => {
+export const downloadConfigYaml = (name: string | undefined, configInput: string, onComplete?: () => void) => {
   const blob = new Blob([configInput], { type: 'text/yaml' });
-  saveAs(blob, 'config.yaml');
+  saveAs(blob, (name ? `${name}-` : '') + 'config.yaml');
   onComplete?.();
 };
 
 // Download config and custom footprints as a zip
 export const downloadConfigWithFootprints = (
+  name: string | undefined,
   configInput: string,
   customFootprints: CustomFootprintConfig[],
   onComplete?: () => void
@@ -35,7 +36,7 @@ export const downloadConfigWithFootprints = (
   zip
     .generateAsync({ type: 'blob' })
     .then((content) => {
-      saveAs(content, 'ergogen-config-with-footprints.zip');
+      saveAs(content, (name ? `${name}-` : '') + 'ergogen-config-with-footprints.zip');
       onComplete?.();
     })
     .catch((error: unknown) => {
@@ -45,6 +46,7 @@ export const downloadConfigWithFootprints = (
 
 // Download all resources (config, footprints, and generated files)
 export const downloadAllResources = (
+  name: string | undefined,
   configInput: string,
   customFootprints: { name: string; content: string }[],
   results: Results,
@@ -96,7 +98,7 @@ export const downloadAllResources = (
   zip
     .generateAsync({ type: 'blob' })
     .then((content) => {
-      saveAs(content, 'ergogen-all-resources.zip');
+      saveAs(content, (name ? `${name}-` : '') + 'ergogen-all-resources.zip');
       onComplete?.();
     })
     .catch((error: unknown) => {
